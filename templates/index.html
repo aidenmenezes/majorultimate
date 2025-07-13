@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+
+{% block title %}GI Abnormality Detection - Home{% endblock %}
+
+{% block content %}
+<div class="row align-items-center min-vh-75">
+    <div class="col-lg-6">
+        <div class="text-center text-lg-start">
+            <h1 class="display-4 fw-bold text-primary mb-4">
+                <i class="fas fa-stethoscope me-3"></i>
+                GI Abnormality Detection
+            </h1>
+            <p class="lead mb-4">
+                Advanced AI-powered endoscopic image analysis with Grad-CAM explainability. 
+                Detect gastrointestinal abnormalities with confidence and transparency.
+            </p>
+            <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center justify-content-lg-start">
+                <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-sign-in-alt me-2"></i>Login
+                </a>
+                <a href="#features" class="btn btn-outline-primary btn-lg">
+                    <i class="fas fa-info-circle me-2"></i>Learn More
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="text-center">
+            <img src="https://via.placeholder.com/600x400/3498db/ffffff?text=AI+Medical+Imaging" 
+                 alt="AI Medical Imaging" class="img-fluid rounded-3 shadow">
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<section id="features" class="py-5">
+    <div class="row">
+        <div class="col-12 text-center mb-5">
+            <h2 class="display-5 fw-bold text-primary">Key Features</h2>
+            <p class="lead">Comprehensive GI abnormality detection with explainable AI</p>
+        </div>
+    </div>
+    
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100 text-center">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <i class="fas fa-brain fa-3x text-primary"></i>
+                    </div>
+                    <h5 class="card-title">AI-Powered Detection</h5>
+                    <p class="card-text">
+                        Advanced CNN model trained on extensive GI image datasets for accurate 
+                        abnormality detection including ulcers, polyps, and bleeding.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card h-100 text-center">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <i class="fas fa-eye fa-3x text-success"></i>
+                    </div>
+                    <h5 class="card-title">Grad-CAM Explainability</h5>
+                    <p class="card-text">
+                        Visual heatmaps show exactly which regions of the image influenced 
+                        the AI's decision, providing transparency and trust.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card h-100 text-center">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <i class="fas fa-chart-line fa-3x text-warning"></i>
+                    </div>
+                    <h5 class="card-title">EWT Preprocessing</h5>
+                    <p class="card-text">
+                        Empirical Wavelet Transform preprocessing enhances image quality 
+                        and improves detection accuracy for better diagnostic results.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row g-4 mt-4">
+        <div class="col-md-4">
+            <div class="card h-100 text-center">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <i class="fas fa-history fa-3x text-info"></i>
+                    </div>
+                    <h5 class="card-title">Patient History</h5>
+                    <p class="card-text">
+                        Comprehensive patient case management with historical records, 
+                        tracking, and easy retrieval of previous diagnoses.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card h-100 text-center">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <i class="fas fa-comments fa-3x text-secondary"></i>
+                    </div>
+                    <h5 class="card-title">Expert Feedback</h5>
+                    <p class="card-text">
+                        Clinicians can provide feedback on predictions, enabling 
+                        continuous model improvement and validation.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card h-100 text-center">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <i class="fas fa-shield-alt fa-3x text-danger"></i>
+                    </div>
+                    <h5 class="card-title">Secure & Compliant</h5>
+                    <p class="card-text">
+                        HIPAA-compliant system with secure authentication, 
+                        data encryption, and audit trails for patient privacy.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="py-5 bg-light">
+    <div class="row">
+        <div class="col-12 text-center mb-5">
+            <h2 class="display-5 fw-bold text-primary">How It Works</h2>
+            <p class="lead">Simple 4-step process for GI abnormality detection</p>
+        </div>
+    </div>
+    
+    <div class="row g-4">
+        <div class="col-md-3">
+            <div class="text-center">
+                <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
+                     style="width: 80px; height: 80px;">
+                    <span class="h3 mb-0">1</span>
+                </div>
+                <h5>Upload Image</h5>
+                <p>Upload endoscopic images with patient information</p>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="text-center">
+                <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
+                     style="width: 80px; height: 80px;">
+                    <span class="h3 mb-0">2</span>
+                </div>
+                <h5>AI Processing</h5>
+                <p>EWT preprocessing and CNN analysis</p>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="text-center">
+                <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
+                     style="width: 80px; height: 80px;">
+                    <span class="h3 mb-0">3</span>
+                </div>
+                <h5>Generate Results</h5>
+                <p>Get prediction with confidence score and Grad-CAM heatmap</p>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="text-center">
+                <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
+                     style="width: 80px; height: 80px;">
+                    <span class="h3 mb-0">4</span>
+                </div>
+                <h5>Review & Feedback</h5>
+                <p>Review results and provide expert feedback</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="py-5">
+    <div class="row">
+        <div class="col-12 text-center">
+            <h2 class="display-5 fw-bold text-primary mb-4">Ready to Get Started?</h2>
+            <p class="lead mb-4">
+                Join medical professionals worldwide in using AI-powered GI abnormality detection
+            </p>
+            <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg">
+                <i class="fas fa-rocket me-2"></i>Start Now
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %} 

@@ -1,0 +1,15 @@
+Flask==2.3.3
+Flask-SQLAlchemy==3.0.5
+Flask-Login==0.6.3
+Flask-WTF==1.1.1
+Werkzeug==2.3.7
+tensorflow==2.10.0
+numpy==1.24.3
+opencv-python==4.8.0.76
+Pillow==10.0.0
+matplotlib==3.7.2
+pandas==2.0.3
+reportlab==4.0.4
+python-dotenv==1.0.0
+bcrypt==4.0.1
+email-validator==2.0.0 

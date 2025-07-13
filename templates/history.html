@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+
+{% block title %}Patient History - GI Abnormality Detection{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h4 class="card-title mb-0">
+                            <i class="fas fa-history me-2"></i>
+                            Patient History
+                        </h4>
+                    </div>
+                    <div class="col-auto">
+                        <a href="{{ url_for('upload_image') }}" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>New Case
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- Search Form -->
+                <form method="GET" class="row g-3 mb-4">
+                    <div class="col-md-8">
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-search"></i>
+                            </span>
+                            <input type="text" class="form-control" name="search" 
+                                   value="{{ search }}" placeholder="Search by patient name or ID...">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search me-2"></i>Search
+                        </button>
+                        {% if search %}
+                        <a href="{{ url_for('patient_history') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-times me-2"></i>Clear
+                        </a>
+                        {% endif %}
+                    </div>
+                </form>
+                
+                <!-- Patient List -->
+                {% if patients %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Patient ID</th>
+                                <th>Name</th>
+                                <th>Age</th>
+                                <th>Gender</th>
+                                <th>Total Cases</th>
+                                <th>Last Case</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for patient in patients %}
+                            <tr>
+                                <td>
+                                    <strong>{{ patient.patient_id }}</strong>
+                                </td>
+                                <td>{{ patient.name }}</td>
+                                <td>
+                                    {% if patient.age %}
+                                        {{ patient.age }} years
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if patient.gender %}
+                                        {{ patient.gender }}
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% set case_count = patient.endoscopic_images|length %}
+                                    <span class="badge bg-primary">{{ case_count }}</span>
+                                </td>
+                                <td>
+                                    {% if patient.endoscopic_images %}
+                                        {% set latest_image = patient.endoscopic_images|sort(attribute='upload_date')|last %}
+                                        <small>{{ latest_image.upload_date.strftime('%Y-%m-%d') }}</small>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a href="{{ url_for('patient_detail', patient_id=patient.id) }}" 
+                                           class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-eye me-1"></i>View
+                                        </a>
+                                        {% if current_user.role in ['admin', 'doctor'] %}
+                                        <button type="button" class="btn btn-sm btn-outline-danger" 
+                                                onclick="confirmDeletePatient({{ patient.id }}, '{{ patient.name }}', '{{ patient.patient_id }}')">
+                                            <i class="fas fa-trash me-1"></i>Delete
+                                        </button>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    {% if search %}
+                        <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No patients found</h5>
+                        <p class="text-muted">Try adjusting your search criteria</p>
+                        <a href="{{ url_for('patient_history') }}" class="btn btn-primary">
+                            <i class="fas fa-list me-2"></i>View All Patients
+                        </a>
+                    {% else %}
+                        <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No patients yet</h5>
+                        <p class="text-muted">Upload your first image to create a patient record</p>
+                        <a href="{{ url_for('upload_image') }}" class="btn btn-primary">
+                            <i class="fas fa-upload me-2"></i>Upload First Image
+                        </a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deletePatientModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-danger">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Confirm Patient Deletion
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-3">
+                    <strong>Warning:</strong> This action cannot be undone. The following will be permanently deleted:
+                </p>
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-user text-danger me-2"></i>Patient record</li>
+                    <li><i class="fas fa-images text-danger me-2"></i>All uploaded images</li>
+                    <li><i class="fas fa-chart-line text-danger me-2"></i>All prediction results</li>
+                    <li><i class="fas fa-comments text-danger me-2"></i>All feedback and comments</li>
+                    <li><i class="fas fa-fire text-danger me-2"></i>All heatmap visualizations</li>
+                </ul>
+                <div class="alert alert-warning">
+                    <strong>Patient:</strong> <span id="deletePatientName"></span><br>
+                    <strong>Patient ID:</strong> <span id="deletePatientId"></span>
+                </div>
+                <p class="text-muted">
+                    Are you sure you want to delete this patient and all associated data?
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Cancel
+                </button>
+                <form id="deletePatientForm" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash me-2"></i>Delete Patient
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function confirmDeletePatient(patientId, patientName, patientIdStr) {
+    // Set modal content
+    document.getElementById('deletePatientName').textContent = patientName;
+    document.getElementById('deletePatientId').textContent = patientIdStr;
+    
+    // Set form action
+    document.getElementById('deletePatientForm').action = `/patient/${patientId}/delete`;
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('deletePatientModal'));
+    modal.show();
+}
+</script>
+{% endblock %} 

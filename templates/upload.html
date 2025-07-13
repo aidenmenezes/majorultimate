@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Image - GI Abnormality Detection{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title mb-0">
+                    <i class="fas fa-upload me-2"></i>
+                    Upload Endoscopic Image
+                </h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data" id="uploadForm">
+                    <!-- Patient Information -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label for="patient_id" class="form-label">
+                                <i class="fas fa-id-card me-2"></i>Patient ID *
+                            </label>
+                            <input type="text" class="form-control" id="patient_id" name="patient_id" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="patient_name" class="form-label">
+                                <i class="fas fa-user me-2"></i>Patient Name *
+                            </label>
+                            <input type="text" class="form-control" id="patient_name" name="patient_name" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label for="image_type" class="form-label">
+                                <i class="fas fa-image me-2"></i>Image Type
+                            </label>
+                            <select class="form-select" id="image_type" name="image_type">
+                                <option value="endoscopic">Endoscopic</option>
+                                <option value="colonoscopy">Colonoscopy</option>
+                                <option value="gastroscopy">Gastroscopy</option>
+                                <option value="capsule">Capsule Endoscopy</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="region" class="form-label">
+                                <i class="fas fa-map-marker-alt me-2"></i>GI Region
+                            </label>
+                            <select class="form-select" id="region" name="region">
+                                <option value="esophagus">Esophagus</option>
+                                <option value="stomach">Stomach</option>
+                                <option value="duodenum">Duodenum</option>
+                                <option value="colon">Colon</option>
+                                <option value="rectum">Rectum</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Image Upload Area -->
+                    <div class="upload-area mb-4" id="uploadArea">
+                        <div class="upload-content">
+                            <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-3"></i>
+                            <h5>Drag & Drop your image here</h5>
+                            <p class="text-muted">or click to browse</p>
+                            <input type="file" id="image" name="image" accept="image/*" style="display: none;" required>
+                            <button type="button" class="btn btn-outline-primary" onclick="document.getElementById('image').click()">
+                                <i class="fas fa-folder-open me-2"></i>Choose File
+                            </button>
+                        </div>
+                        <div class="upload-preview" id="uploadPreview" style="display: none;">
+                            <img id="previewImage" class="img-fluid rounded" style="max-height: 300px;">
+                            <div class="mt-3">
+                                <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeImage()">
+                                    <i class="fas fa-trash me-1"></i>Remove
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- File Requirements -->
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-info-circle me-2"></i>File Requirements:</h6>
+                        <ul class="mb-0">
+                            <li>Supported formats: JPG, PNG, JPEG</li>
+                            <li>Maximum file size: 16MB</li>
+                            <li>Recommended resolution: 256x256 pixels or higher</li>
+                            <li>Clear, well-lit endoscopic images work best</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg" id="submitBtn" disabled>
+                            <i class="fas fa-play me-2"></i>Process Image
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const uploadArea = document.getElementById('uploadArea');
+const uploadContent = document.querySelector('.upload-content');
+const uploadPreview = document.getElementById('uploadPreview');
+const previewImage = document.getElementById('previewImage');
+const fileInput = document.getElementById('image');
+const submitBtn = document.getElementById('submitBtn');
+
+// Drag and drop functionality
+uploadArea.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    uploadArea.style.borderColor = '#3498db';
+    uploadArea.style.backgroundColor = 'rgba(52, 152, 219, 0.2)';
+});
+
+uploadArea.addEventListener('dragleave', (e) => {
+    e.preventDefault();
+    uploadArea.style.borderColor = '#3498db';
+    uploadArea.style.backgroundColor = 'rgba(52, 152, 219, 0.1)';
+});
+
+uploadArea.addEventListener('drop', (e) => {
+    e.preventDefault();
+    uploadArea.style.borderColor = '#3498db';
+    uploadArea.style.backgroundColor = 'rgba(52, 152, 219, 0.1)';
+    
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+        handleFile(files[0]);
+    }
+});
+
+// File input change
+fileInput.addEventListener('change', (e) => {
+    if (e.target.files.length > 0) {
+        handleFile(e.target.files[0]);
+    }
+});
+
+function handleFile(file) {
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+        alert('Please select an image file.');
+        return;
+    }
+    
+    // Validate file size (16MB)
+    if (file.size > 16 * 1024 * 1024) {
+        alert('File size must be less than 16MB.');
+        return;
+    }
+    
+    // Show preview
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        previewImage.src = e.target.result;
+        uploadContent.style.display = 'none';
+        uploadPreview.style.display = 'block';
+        submitBtn.disabled = false;
+    };
+    reader.readAsDataURL(file);
+}
+
+function removeImage() {
+    fileInput.value = '';
+    uploadContent.style.display = 'block';
+    uploadPreview.style.display = 'none';
+    submitBtn.disabled = true;
+}
+
+// Form validation
+document.getElementById('uploadForm').addEventListener('submit', (e) => {
+    const patientId = document.getElementById('patient_id').value.trim();
+    const patientName = document.getElementById('patient_name').value.trim();
+    const image = fileInput.files[0];
+    
+    if (!patientId || !patientName || !image) {
+        e.preventDefault();
+        alert('Please fill in all required fields and select an image.');
+        return;
+    }
+    
+    // Show loading state
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
+    submitBtn.disabled = true;
+});
+</script>
+{% endblock %} 

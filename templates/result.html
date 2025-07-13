@@ -1,0 +1,272 @@
+{% extends "base.html" %}
+
+{% block title %}Analysis Results - GI Abnormality Detection{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title mb-0">
+                    <i class="fas fa-chart-line me-2"></i>
+                    Analysis Results
+                </h4>
+            </div>
+            <div class="card-body">
+                <!-- Patient Information -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-user me-2"></i>Patient Information</h6>
+                        <p><strong>Name:</strong> {{ image_record.patient.name }}</p>
+                        <p><strong>ID:</strong> {{ image_record.patient.patient_id }}</p>
+                        <p><strong>Upload Date:</strong> {{ image_record.upload_date.strftime('%Y-%m-%d %H:%M') }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-image me-2"></i>Image Details</h6>
+                        <p><strong>Type:</strong> {{ image_record.image_type }}</p>
+                        <p><strong>Filename:</strong> {{ image_record.original_filename }}</p>
+                        <p><strong>Model Used:</strong> {{ prediction.model_used }}</p>
+                    </div>
+                </div>
+                
+                <!-- Prediction Results -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="alert {% if category == 'Abnormal' %}alert-danger{% elif category == 'Normal' %}alert-success{% else %}alert-warning{% endif %}">
+                            <h5 class="alert-heading">
+                                <i class="fas fa-{% if category == 'Abnormal' %}exclamation-triangle{% elif category == 'Normal' %}check-circle{% else %}question-circle{% endif %} me-2"></i>
+                                Detection Result
+                            </h5>
+                            <p class="mb-2">
+                                <strong>Category:</strong> 
+                                <span class="badge {% if category == 'Abnormal' %}bg-danger{% elif category == 'Normal' %}bg-success{% else %}bg-warning{% endif %} fs-6">{{ category }}</span>
+                            </p>
+                            <p class="mb-2">
+                                <strong>Specific Finding:</strong> 
+                                <span class="badge bg-primary fs-6">{{ specific_finding }}</span>
+                            </p>
+                            <p class="mb-2">
+                                <strong>Confidence Score:</strong> 
+                                <span class="fw-bold">{{ "%.1f"|format(prediction.confidence_score * 100) }}%</span>
+                            </p>
+                            {% if prediction.is_uncertain %}
+                            <p class="mb-0">
+                                <i class="fas fa-info-circle me-1"></i>
+                                <strong>Note:</strong> This prediction has low confidence. Please review carefully.
+                            </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Confidence Bar -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h6><i class="fas fa-percentage me-2"></i>Confidence Breakdown</h6>
+                        <div class="row">
+                            {% for class in classes %}
+                            <div class="col-md-3 mb-2">
+                                <div class="d-flex justify-content-between">
+                                    <span>{{ class }}</span>
+                                    <span class="fw-bold">
+                                        {% if class == prediction.abnormality_type %}
+                                            {{ "%.1f"|format(prediction.confidence_score * 100) }}%
+                                        {% else %}
+                                            {% set other_score = (1 - prediction.confidence_score) / (classes|length - 1) %}
+                                            {{ "%.1f"|format(other_score * 100) }}%
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                <div class="progress" style="height: 8px;">
+                                    <div class="progress-bar {% if class == prediction.abnormality_type %}bg-primary{% else %}bg-secondary{% endif %}" 
+                                         role="progressbar" 
+                                         style="width: {% if class == prediction.abnormality_type %}{{ prediction.confidence_score * 100 }}{% else %}{{ (1 - prediction.confidence_score) / (classes|length - 1) * 100 }}{% endif %}%">
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Image Analysis -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-eye me-2"></i>
+                    Visual Analysis with Grad-CAM
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="text-center mb-3">
+                            <h6>Original Image</h6>
+                            <img src="{{ url_for('uploaded_file', filename=image_record.image_path.split('/')[-1]) }}" 
+                                 class="img-fluid rounded" alt="Original Image">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center mb-3">
+                            <h6>EWT Processed</h6>
+                            <img src="{{ url_for('uploaded_file', filename=image_record.image_path.split('/')[-1]) }}" 
+                                 class="img-fluid rounded" alt="EWT Processed">
+                            <small class="text-muted">Enhanced with Empirical Wavelet Transform</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center mb-3">
+                            <h6>Grad-CAM Heatmap</h6>
+                            <img src="{{ url_for('static', filename=heatmap_path) }}" 
+                                 class="img-fluid rounded" alt="Grad-CAM Heatmap">
+                            <small class="text-muted">AI attention visualization</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Heatmap Legend -->
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <div class="alert alert-info">
+                            <h6><i class="fas fa-info-circle me-2"></i>Understanding the Grad-CAM Heatmap</h6>
+                            <p class="mb-2">
+                                The heatmap shows which regions of the image most influenced the AI's decision:
+                            </p>
+                            <ul class="mb-0">
+                                <li><strong>Red areas:</strong> High influence on the prediction</li>
+                                <li><strong>Yellow areas:</strong> Moderate influence</li>
+                                <li><strong>Blue areas:</strong> Low influence</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Actions -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-download me-2"></i>Export Results</h6>
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-outline-primary" onclick="downloadReport()">
+                                <i class="fas fa-file-pdf me-2"></i>Download PDF Report
+                            </button>
+                            <button class="btn btn-outline-secondary" onclick="downloadHeatmap()">
+                                <i class="fas fa-image me-2"></i>Download Heatmap
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-comments me-2"></i>Provide Feedback</h6>
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-success" onclick="markCorrect()">
+                                <i class="fas fa-check me-2"></i>Mark as Correct
+                            </button>
+                            <button class="btn btn-warning" onclick="markIncorrect()">
+                                <i class="fas fa-times me-2"></i>Mark as Incorrect
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Feedback Modal -->
+<div class="modal fade" id="feedbackModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Provide Feedback</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('submit_feedback', prediction_id=prediction.id) }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Is the prediction correct?</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="is_correct" value="true" id="correctYes">
+                            <label class="form-check-label" for="correctYes">Yes</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="is_correct" value="false" id="correctNo">
+                            <label class="form-check-label" for="correctNo">No</label>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="manual_label" class="form-label">Correct Label (if different)</label>
+                        <select class="form-select" id="manual_label" name="manual_label">
+                            <option value="">Select correct label</option>
+                            {% for class in classes %}
+                            <option value="{{ class }}">{{ class }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="feedback_text" class="form-label">Additional Comments</label>
+                        <textarea class="form-control" id="feedback_text" name="feedback_text" rows="3" 
+                                  placeholder="Any additional comments or observations..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Submit Feedback</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function downloadReport() {
+    // Implementation for PDF report download
+    alert('PDF report download feature will be implemented here.');
+}
+
+function downloadHeatmap() {
+    const link = document.createElement('a');
+    link.href = "{{ url_for('static', filename=heatmap_path.replace('static/', '')) }}";
+    link.download = 'heatmap_{{ prediction.id }}.png';
+    link.click();
+}
+
+function markCorrect() {
+    document.getElementById('correctYes').checked = true;
+    const modal = new bootstrap.Modal(document.getElementById('feedbackModal'));
+    modal.show();
+}
+
+function markIncorrect() {
+    document.getElementById('correctNo').checked = true;
+    const modal = new bootstrap.Modal(document.getElementById('feedbackModal'));
+    modal.show();
+}
+
+// Auto-show feedback modal if confidence is low
+{% if prediction.is_uncertain %}
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {
+        const modal = new bootstrap.Modal(document.getElementById('feedbackModal'));
+        modal.show();
+    }, 2000);
+});
+{% endif %}
+</script>
+{% endblock %} 
