@@ -232,7 +232,7 @@ Thumbs.db
 # Uncomment if you don't want to track large data files
 data/unlabeled-images/
 data/segmented-images/
-# data/labeled-images/
+data/labeled-images/
 data/labeled-videos/
 
 # Backup files

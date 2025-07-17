@@ -21,8 +21,8 @@
     256,
     3
   ],
-  "training_date": "2025-07-13T12:52:27.348132",
-  "test_accuracy": 0.832018927444795,
+  "training_date": "2025-07-15T18:22:07.237297",
+  "test_accuracy": 0.831230283911672,
   "classification_report": {
     "Abnormal_Hemorrhoids": {
       "precision": 0.0,
@@ -31,51 +31,51 @@
       "support": 1.0
     },
     "Abnormal_Polyps": {
-      "precision": 0.9351851851851852,
-      "recall": 0.9950738916256158,
-      "f1-score": 0.964200477326969,
+      "precision": 0.9435294117647058,
+      "recall": 0.9876847290640394,
+      "f1-score": 0.9651022864019253,
       "support": 406.0
     },
     "Abnormal_UC_Grade_0_1": {
-      "precision": 0.0,
-      "recall": 0.0,
-      "f1-score": 0.0,
+      "precision": 0.5,
+      "recall": 0.14285714285714285,
+      "f1-score": 0.22222222222222224,
       "support": 7.0
     },
     "Abnormal_UC_Grade_1": {
-      "precision": 0.39285714285714285,
-      "recall": 0.2619047619047619,
-      "f1-score": 0.3142857142857143,
+      "precision": 0.6666666666666666,
+      "recall": 0.19047619047619047,
+      "f1-score": 0.2962962962962963,
       "support": 42.0
     },
     "Abnormal_UC_Grade_2": {
-      "precision": 0.6634615384615384,
-      "recall": 0.7340425531914894,
-      "f1-score": 0.6969696969696969,
+      "precision": 0.6111111111111112,
+      "recall": 0.8191489361702128,
+      "f1-score": 0.7000000000000001,
       "support": 94.0
     },
     "Abnormal_UC_Grade_3": {
-      "precision": 0.9,
-      "recall": 0.3333333333333333,
-      "f1-score": 0.48648648648648646,
+      "precision": 0.75,
+      "recall": 0.2222222222222222,
+      "f1-score": 0.34285714285714286,
       "support": 27.0
     },
     "Normal_Pylorus": {
-      "precision": 0.9554455445544554,
-      "recall": 0.965,
-      "f1-score": 0.9601990049751244,
+      "precision": 0.9651741293532339,
+      "recall": 0.97,
+      "f1-score": 0.9675810473815462,
       "support": 200.0
     },
     "Normal_Retroflex_Stomach": {
-      "precision": 0.9866666666666667,
-      "recall": 0.9673202614379085,
-      "f1-score": 0.9768976897689768,
+      "precision": 0.9741935483870968,
+      "recall": 0.9869281045751634,
+      "f1-score": 0.9805194805194806,
       "support": 153.0
     },
     "Normal_Z_Line": {
-      "precision": 0.6956521739130435,
-      "recall": 0.946236559139785,
-      "f1-score": 0.8018223234624146,
+      "precision": 0.703862660944206,
+      "recall": 0.8817204301075269,
+      "f1-score": 0.782816229116945,
       "support": 186.0
     },
     "Abnormal_Barretts": {
@@ -85,33 +85,33 @@
       "support": 19.0
     },
     "Abnormal_Esophagitis_A": {
-      "precision": 0.45,
-      "recall": 0.1111111111111111,
-      "f1-score": 0.1782178217821782,
+      "precision": 0.40540540540540543,
+      "recall": 0.37037037037037035,
+      "f1-score": 0.38709677419354843,
       "support": 81.0
     },
     "Abnormal_Esophagitis_BD": {
-      "precision": 0.5454545454545454,
-      "recall": 0.6923076923076923,
-      "f1-score": 0.6101694915254238,
+      "precision": 0.7586206896551724,
+      "recall": 0.4230769230769231,
+      "f1-score": 0.5432098765432098,
       "support": 52.0
     },
-    "accuracy": 0.832018927444795,
+    "accuracy": 0.831230283911672,
     "macro avg": {
-      "precision": 0.5437268997577149,
-      "recall": 0.5005275136709747,
-      "f1-score": 0.4991040588819154,
+      "precision": 0.6065469686072998,
+      "recall": 0.4995404207433159,
+      "f1-score": 0.5156417796276931,
       "support": 1268.0
     },
     "weighted avg": {
-      "precision": 0.8037102676836936,
-      "recall": 0.832018927444795,
-      "f1-score": 0.8045143826990551,
+      "precision": 0.8182637169008806,
+      "recall": 0.831230283911672,
+      "f1-score": 0.8120109874115067,
       "support": 1268.0
     }
   },
-  "final_train_accuracy": 0.8300595879554749,
-  "final_val_accuracy": 0.8385826945304871,
-  "final_train_loss": 0.4566328525543213,
-  "final_val_loss": 0.4589928686618805
+  "final_train_accuracy": 0.8357978463172913,
+  "final_val_accuracy": 0.8090550899505615,
+  "final_train_loss": 0.4431283473968506,
+  "final_val_loss": 0.49311500787734985
 }
